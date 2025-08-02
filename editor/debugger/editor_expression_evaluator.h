@@ -55,6 +55,7 @@ private:
 	void _evaluate();
 	void _clear();
 
+	void _update_fonts();
 	void _remote_object_selected(ObjectID p_id);
 	void _on_expression_input_changed(const String &p_expression);
 	void _on_debugger_breaked(bool p_breaked, bool p_can_debug);

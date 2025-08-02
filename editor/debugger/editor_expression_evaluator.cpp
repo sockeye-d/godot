@@ -74,6 +74,12 @@ void EditorExpressionEvaluator::_clear() {
 	inspector->clear_stack_variables();
 }
 
+void EditorExpressionEvaluator::_update_fonts() {
+	if (expression_input) {
+		expression_input->add_theme_font_override("font", get_theme_font(SceneStringName(font), "CodeEdit"));
+	}
+}
+
 void EditorExpressionEvaluator::_remote_object_selected(ObjectID p_id) {
 	Array arr = { p_id };
 	editor_debugger->emit_signal(SNAME("remote_objects_requested"), arr);
@@ -98,6 +104,10 @@ void EditorExpressionEvaluator::_notification(int p_what) {
 		case NOTIFICATION_READY: {
 			EditorDebuggerNode::get_singleton()->connect("breaked", callable_mp(this, &EditorExpressionEvaluator::_on_debugger_breaked));
 			EditorDebuggerNode::get_singleton()->connect("clear_execution", callable_mp(this, &EditorExpressionEvaluator::_on_debugger_clear_execution));
+			_update_fonts();
+		} break;
+		case NOTIFICATION_THEME_CHANGED: {
+			_update_fonts();
 		} break;
 	}
 }
