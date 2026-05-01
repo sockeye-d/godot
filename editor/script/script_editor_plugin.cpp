@@ -3628,7 +3628,7 @@ void ScriptEditor::_on_find_in_files_result_selected(const String &fpath, Vector
 			return;
 		} else if (fpath.get_extension() == "tscn") {
 			const PackedStringArray lines = FileAccess::get_file_as_string(fpath).split("\n");
-			if (p_line_range.x > lines.size() || p_line_range.y > lines.size()) {
+			if (p_line_range.x > lines.size() - 1 || p_line_range.y > lines.size() - 1) {
 				return;
 			}
 

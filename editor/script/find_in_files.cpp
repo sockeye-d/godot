@@ -41,6 +41,7 @@
 #include "editor/gui/editor_validation_panel.h"
 #include "editor/settings/editor_command_palette.h"
 #include "editor/themes/editor_scale.h"
+#include "modules/regex/regex.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
 #include "scene/gui/check_box.h"
@@ -343,8 +344,9 @@ void FindInFiles::_scan_file(const String &fpath) {
 
 		const String text = f->get_as_text();
 		int last_end = 0;
-		Ref<RegExMatch> match = regex->search(text);
-		while (match.is_valid()) {
+		TypedArray<RegExMatch> matches = regex->search_all(text);
+		for (const Variant &match_var : matches) {
+			const Ref<RegExMatch> &match = match_var;
 			const int abs_start = match->get_start(0);
 			const int abs_end = match->get_end(0);
 			const int start_line_number = _get_line_number(abs_start, text);
@@ -358,8 +360,6 @@ void FindInFiles::_scan_file(const String &fpath) {
 			if (abs_start == last_end) {
 				last_end++;
 			}
-
-			match = regex->search(text, last_end);
 		}
 	} else {
 		int line_number = 0;
@@ -1052,20 +1052,20 @@ void FindInFilesPanel::_notification(int p_what) {
 	}
 }
 
-static String _process_tabs(const String &p_input, int &inout_start_index, int &inout_end_index) {
+static String _process_tabs(const String &p_input, int &r_start_index, int &r_end_index) {
 	static constexpr int tab_width = 4;
 	static const String tab = String(" ").repeat(tab_width);
 	StringBuilder buffer;
-	int start_index = inout_start_index;
-	int end_index = inout_end_index;
+	int start_index = r_start_index;
+	int end_index = r_end_index;
 	for (int i = 0; i < p_input.length(); i++) {
 		if (const char32_t ch = p_input[i]; ch == '\t') {
 			buffer.append(tab);
-			if (inout_start_index > i) {
+			if (r_start_index > i) {
 				// 1 character gets replaced with tab_width.
 				start_index += tab_width - 1;
 			}
-			if (inout_end_index > i) {
+			if (r_end_index > i) {
 				// 1 character gets replaced with tab_width.
 				end_index += tab_width - 1;
 			}
@@ -1073,9 +1073,9 @@ static String _process_tabs(const String &p_input, int &inout_start_index, int &
 			buffer.append(String::chr(ch));
 		}
 	}
-	inout_start_index = start_index;
-	if (inout_end_index != FULL_LINE) {
-		inout_end_index = end_index;
+	r_start_index = start_index;
+	if (r_end_index != FULL_LINE) {
+		r_end_index = end_index;
 	}
 	return buffer;
 }

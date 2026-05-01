@@ -33,9 +33,10 @@
 #include "core/templates/hash_map.h"
 #include "core/variant/typed_dictionary.h"
 #include "editor/docks/editor_dock.h"
-#include "editor/gui/editor_validation_panel.h"
-#include "modules/regex/regex.h"
 #include "scene/gui/dialogs.h"
+
+class EditorValidationPanel;
+class RegEx;
 
 // Performs the actual search
 class FindInFiles : public Node {

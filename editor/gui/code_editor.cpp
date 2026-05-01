@@ -1405,7 +1405,9 @@ void CodeTextEditor::goto_line_centered(int p_line, int p_column) {
 void CodeTextEditor::select(int p_origin_line, int p_origin_column, int p_caret_line, int p_caret_column) {
 	text_editor->remove_secondary_carets();
 	text_editor->deselect();
-	for (int line = p_origin_line; line <= p_origin_line; line++) {
+	int start_line = MIN(p_origin_line, p_caret_line);
+	int end_line = MAX(p_origin_line, p_caret_line);
+	for (int line = start_line; line <= end_line; line++) {
 		text_editor->unfold_line(CLAMP(line, 0, text_editor->get_line_count() - 1));
 	}
 	text_editor->select(p_origin_line, p_origin_column, p_caret_line, p_caret_column);
